@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Work Time Clock",
+  "name": "ContractorClock",
   "version": "1.0.0",
   "description": "Log short task notes during the day and generate a ';'-separated daily report. Data stays local.",
   "icons": {
@@ -11,7 +11,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Work Time Clock",
+    "default_title": "ContractorClock",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png"
