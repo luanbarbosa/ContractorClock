@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Work Time Clock</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Today</h1>
+      <p id="date" class="date"></p>
+    </div>
+    <span id="count" class="count">0</span>
+  </header>
+
+  <form id="task-form" class="composer" autocomplete="off">
+    <input id="task-input" type="text" maxlength="200" placeholder="What are you working on?" required autofocus>
+    <button type="submit" class="add" aria-label="Add task">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>
+    </button>
+  </form>
+
+  <ol id="task-list" class="tasks"></ol>
+  <div id="empty" class="empty">
+    <p>Nothing logged yet.</p>
+    <p class="hint">Add what you're doing — it stays on this machine.</p>
+  </div>
+
+  <section id="report" class="report" hidden>
+    <div class="report-head">
+      <span>Daily report</span>
+      <button id="close-report" class="icon" aria-label="Close report">
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+      </button>
+    </div>
+    <textarea id="report-text" readonly rows="4"></textarea>
+    <div class="row">
+      <button id="copy-btn" class="secondary">Copy</button>
+      <button id="clear-btn" class="ghost-danger">Clear day</button>
+    </div>
+  </section>
+
+  <footer>
+    <button id="report-btn" class="primary">Report day</button>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>

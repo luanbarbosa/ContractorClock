@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Work Time Clock",
+  "version": "1.0.0",
+  "description": "Log short task notes during the day and generate a ';'-separated daily report. Data stays local.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Work Time Clock",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  },
+  "content_security_policy": {
+    "extension_pages": "default-src 'none'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+  }
+}
