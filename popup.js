@@ -1,5 +1,7 @@
 // Storage: window.localStorage of the extension's own origin (chrome-extension://<id>).
 // Needs no manifest permission. Data never leaves the machine.
+import { patchState, refreshBadge, todayKey } from './reminder.js';
+
 const KEY = 'tasks';
 
 const $ = (id) => document.getElementById(id);
@@ -13,6 +15,8 @@ const reportText = $('report-text');
 const reportBtn = $('report-btn');
 const copyBtn = $('copy-btn');
 const clearBtn = $('clear-btn');
+const nudge = $('nudge');
+const remindTime = $('remind-time');
 
 // Each task: { text, at } (at = ms timestamp). Older plain-string entries are upgraded.
 function load() {
@@ -25,9 +29,54 @@ function load() {
   }
 }
 
-function save(tasks) {
+function save(tasks, extra = {}) {
   localStorage.setItem(KEY, JSON.stringify(tasks));
+  syncReminder({ hasTasks: tasks.length > 0, ...extra });
 }
+
+// Mirror state to IndexedDB so the background worker can update the badge.
+async function syncReminder(patch) {
+  try {
+    const state = await patchState(patch);
+    nudge.hidden = !(await refreshBadge(state));
+  } catch {}
+}
+
+// Short two-tone chime via Web Audio (no audio file, no CSP change).
+function chime() {
+  try {
+    const ctx = new AudioContext();
+    [880, 660].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const t = ctx.currentTime + i * 0.18;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.2, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.17);
+    });
+    setTimeout(() => ctx.close(), 600);
+  } catch {}
+}
+
+async function initReminder() {
+  const state = await patchState({ hasTasks: load().length > 0 });
+  remindTime.value = state.time;
+  const overdue = await refreshBadge(state);
+  nudge.hidden = !overdue;
+  // Sound at most once per day, the first time the popup opens while overdue.
+  if (overdue && state.beepedOn !== todayKey()) {
+    chime();
+    patchState({ beepedOn: todayKey() });
+  }
+}
+
+remindTime.addEventListener('change', () => {
+  if (remindTime.value) syncReminder({ time: remindTime.value });
+});
 
 const fmtTime = (ms) =>
   ms ? new Date(ms).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : '';
@@ -86,7 +135,8 @@ form.addEventListener('submit', (e) => {
   if (!text) return;
   const tasks = load();
   tasks.push({ text, at: Date.now() });
-  save(tasks);
+  // New work after reporting makes today's report stale: remind again.
+  save(tasks, { reportedOn: null });
   input.value = '';
   render();
 });
@@ -95,6 +145,7 @@ reportBtn.addEventListener('click', () => {
   reportText.value = buildReport(load());
   report.hidden = false;
   reportText.select();
+  syncReminder({ reportedOn: todayKey() });
 });
 
 $('close-report').addEventListener('click', () => {
@@ -140,3 +191,4 @@ function resetClear() {
 }
 
 render();
+initReminder().catch(() => {});

@@ -246,6 +246,33 @@ footer {
 .primary:active { transform: scale(0.99); }
 .primary:disabled { opacity: 0.35; cursor: default; }
 
+.nudge {
+  margin: 0 0 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--danger);
+  border-radius: 7px;
+  color: var(--danger);
+  font-weight: 550;
+  text-align: center;
+}
+.remind {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.remind input {
+  padding: 2px 4px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+}
+
 /* Scrollbar */
 .tasks::-webkit-scrollbar { width: 6px; }
 .tasks::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }

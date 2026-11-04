@@ -42,9 +42,14 @@
   </section>
 
   <footer>
+    <p id="nudge" class="nudge" role="status" hidden>Don't forget to report your day.</p>
     <button id="report-btn" class="primary">Report day</button>
+    <label class="remind">
+      Remind me at
+      <input id="remind-time" type="time" required>
+    </label>
   </footer>
 
-  <script src="popup.js"></script>
+  <script type="module" src="popup.js"></script>
 </body>
 </html>
